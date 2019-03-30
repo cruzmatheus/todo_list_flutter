@@ -27,11 +27,40 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   final _formKey = GlobalKey<FormState>();
+  String taskName;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  Future<String> _addTaskDialog(BuildContext context) async {
+    showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                  title: Center(child: new Text("Add task")),
+                  content: Form(key: _formKey,
+                                child: Column(mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                        Padding(padding: EdgeInsets.all(8.0),
+                                                                child: TextField(decoration: new InputDecoration(labelText: "Task name", hintText: "eg. By milk, learn flutter, ..."),
+                                                                onChanged: (value) { taskName = value; })),
+                                                        Padding(padding: EdgeInsets.all(8.0),
+                                                                child: RaisedButton(
+                                                                  child: Text("Submit"),
+                                                                  color: Colors.green,
+                                                                  textColor: Colors.white,
+                                                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                                                  onPressed: () {
+                                                                      // if (_formKey.currentState.validate()) {
+                                                                      //   _formKey.currentState.save();
+                                                                      // }
+                                                                      setState(() {
+                                                                        Navigator.of(context).pop(taskName);
+                                                                      });
+                                                                    },
+                                                                  )
+                                                                )
+                                                          ]
+                                )
+                            )
+              )
+          );
   }
 
   @override
@@ -45,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              taskName ?? 'Add your first task!'
             ),
             Text(
               '$_counter',
@@ -56,33 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (_) => new AlertDialog(
-                  title: Center(child: new Text("Add task")),
-                  content: Form(key: _formKey,
-                                child: Column(mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                        Padding(padding: EdgeInsets.all(8.0),
-                                                                child: TextFormField(decoration: new InputDecoration(hintText: "Task name"),)),
-                                                        Padding(padding: EdgeInsets.all(8.0),
-                                                                child: RaisedButton(
-                                                                  child: Text("Submit"),
-                                                                  color: Colors.green,
-                                                                  textColor: Colors.white,
-                                                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                                                                  onPressed: () {
-                                                                      if (_formKey.currentState.validate()) {
-                                                                        _formKey.currentState.save();
-                                                                      }
-                                                                    },
-                                                                  )
-                                                                )
-                                                          ]
-                                )
-                            )
-              )
-          );
+          _addTaskDialog(context);
          },
         tooltip: 'Increment',
         child: Icon(Icons.add),
