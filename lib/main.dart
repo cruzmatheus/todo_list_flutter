@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -59,23 +59,26 @@ class _MyHomePageState extends State<MyHomePage> {
           showDialog(
               context: context,
               builder: (_) => new AlertDialog(
-                  title: new Text("Add task to you Todo list"),
+                  title: Center(child: new Text("Add task")),
                   content: Form(key: _formKey,
                                 child: Column(mainAxisSize: MainAxisSize.min,
                                               children: <Widget>[
-                                                    Padding(padding: EdgeInsets.all(8.0),
-                                                            child: TextFormField()),
-                                                    Padding(padding: EdgeInsets.all(8.0),
-                                                            child: RaisedButton(
-                                                              child: Text("Submit"),
-                                                              onPressed: () {
-                                                                  if (_formKey.currentState.validate()) {
-                                                                    _formKey.currentState.save();
-                                                                  }
-                                                                },
-                                                              )
-                                                            )
-                                                                ]
+                                                        Padding(padding: EdgeInsets.all(8.0),
+                                                                child: TextFormField(decoration: new InputDecoration(hintText: "Task name"),)),
+                                                        Padding(padding: EdgeInsets.all(8.0),
+                                                                child: RaisedButton(
+                                                                  child: Text("Submit"),
+                                                                  color: Colors.green,
+                                                                  textColor: Colors.white,
+                                                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                                                  onPressed: () {
+                                                                      if (_formKey.currentState.validate()) {
+                                                                        _formKey.currentState.save();
+                                                                      }
+                                                                    },
+                                                                  )
+                                                                )
+                                                          ]
                                 )
                             )
               )
