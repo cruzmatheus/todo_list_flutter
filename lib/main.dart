@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
-
+List<String> taskNames = new List();
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   final _formKey = GlobalKey<FormState>();
-  String taskName;
+  final textController = TextEditingController();
 
   Future<String> _addTaskDialog(BuildContext context) async {
-    showDialog(
+    return showDialog(
               context: context,
               builder: (_) => new AlertDialog(
                   title: Center(child: new Text("Add task")),
@@ -39,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               children: <Widget>[
                                                         Padding(padding: EdgeInsets.all(8.0),
                                                                 child: TextField(decoration: new InputDecoration(labelText: "Task name", hintText: "eg. By milk, learn flutter, ..."),
-                                                                onChanged: (value) { taskName = value; })),
+                                                                controller: textController,)),
                                                         Padding(padding: EdgeInsets.all(8.0),
                                                                 child: RaisedButton(
                                                                   child: Text("Submit"),
@@ -47,11 +46,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                   textColor: Colors.white,
                                                                   shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                                                                   onPressed: () {
-                                                                      // if (_formKey.currentState.validate()) {
-                                                                      //   _formKey.currentState.save();
-                                                                      // }
                                                                       setState(() {
-                                                                        Navigator.of(context).pop(taskName);
+                                                                        taskNames.add(textController.text);
+                                                                        textController.clear();
+                                                                        Navigator.pop(context);
                                                                       });
                                                                     },
                                                                   )
@@ -63,26 +61,24 @@ class _MyHomePageState extends State<MyHomePage> {
           );
   }
 
+  Widget _buildListView(BuildContext context) {
+    // final List<ListTile> tiles = taskNames ?? taskNames.map((value) {
+    //   return new ListTile(title: new Text(value));
+    // });
+    final Iterable<ListTile> tiles = taskNames.map((value) {
+      return new ListTile(title: new Text(value));
+    });
+    final List<Widget> divided = ListTile.divideTiles(
+                                      context: context, 
+                                      tiles: tiles)
+                                      .toList();
+    return new ListView(children: divided);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              taskName ?? 'Add your first task!'
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
+      body: _buildListView(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _addTaskDialog(context);
