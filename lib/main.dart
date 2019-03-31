@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 void main() => runApp(MyApp());
-List<String> taskNames = new List();
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormState>();
   final textController = TextEditingController();
+  List<String> tasks = new List();
+  List<String> archivedTasks = new List();
 
   Future<String> _addTaskDialog(BuildContext context) async {
     return showDialog(
@@ -47,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                                   shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                                                                   onPressed: () {
                                                                       setState(() {
-                                                                        taskNames.add(textController.text);
+                                                                        tasks.add(textController.text);
                                                                         textController.clear();
                                                                         Navigator.pop(context);
                                                                       });
@@ -62,17 +65,46 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildListView(BuildContext context) {
-    // final List<ListTile> tiles = taskNames ?? taskNames.map((value) {
+    // final List<ListTile> tiles = task ?? task.map((value) {
     //   return new ListTile(title: new Text(value));
     // });
-    final Iterable<ListTile> tiles = taskNames.map((value) {
-      return new ListTile(title: new Text(value));
+    final Iterable<Slidable> tiles = tasks.map((value) {
+      return new Slidable(
+        delegate: new SlidableDrawerDelegate(),
+        actionExtentRatio: 0.25,
+        child: new Container(
+          color: Colors.white,
+          child: new ListTile(
+            leading: new CircleAvatar(
+              backgroundColor: Colors.green,
+              child: new Text("${tasks.indexOf(value) + 1}"),
+              foregroundColor: Colors.white,
+            ),
+            title: new Text(value)
+          ),
+        ),
+        actions: <Widget>[
+          new IconSlideAction(
+            caption: 'Archive',
+            color: Colors.blue,
+            icon: Icons.archive,
+            onTap: () => _archiveTask(value),
+          ),
+        ],
+      );
     });
     final List<Widget> divided = ListTile.divideTiles(
                                       context: context, 
                                       tiles: tiles)
                                       .toList();
     return new ListView(children: divided);
+  }
+
+  void _archiveTask(final String taskName) {
+    setState(() {
+      archivedTasks.add(taskName);
+      tasks.remove(taskName);
+    });
   }
 
   @override
