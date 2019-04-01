@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './view/archieved_tasks.dart';
 
 void main() => runApp(MyApp());
 
@@ -109,7 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Todo App'), 
         actions: <Widget>[ 
-            new IconButton(icon: const Icon(Icons.list, color: Colors.white,))
+            new IconButton(icon: const Icon(Icons.list, color: Colors.white), 
+                          onPressed: () => { 
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ArchivedTasksList(archivedTasks: archivedTasks,)))
+                           },)
           ]),
       body: _buildListView(context),
       floatingActionButton: FloatingActionButton(
