@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 
 void main() => runApp(MyApp());
 
@@ -65,39 +64,36 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildListView(BuildContext context) {
-    // final List<ListTile> tiles = task ?? task.map((value) {
-    //   return new ListTile(title: new Text(value));
-    // });
-    final Iterable<Slidable> tiles = tasks.map((value) {
-      return new Slidable(
-        delegate: new SlidableDrawerDelegate(),
-        actionExtentRatio: 0.25,
-        child: new Container(
-          color: Colors.white,
-          child: new ListTile(
-            leading: new CircleAvatar(
-              backgroundColor: Colors.green,
-              child: new Text("${tasks.indexOf(value) + 1}"),
-              foregroundColor: Colors.white,
-            ),
-            title: new Text(value)
-          ),
-        ),
-        actions: <Widget>[
-          new IconSlideAction(
-            caption: 'Archive',
-            color: Colors.blue,
-            icon: Icons.archive,
-            onTap: () => _archiveTask(value),
-          ),
-        ],
-      );
-    });
-    final List<Widget> divided = ListTile.divideTiles(
-                                      context: context, 
-                                      tiles: tiles)
-                                      .toList();
-    return new ListView(children: divided);
+    return new ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final item = tasks[index];
+        return Dismissible(key: Key(item),
+                          direction: DismissDirection.startToEnd,
+                          child: ListTile(title: Text(item)),
+                          background: Container(
+                                        color: Colors.greenAccent, 
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                          child: Stack(
+                                            children: <Widget>[
+                                              Icon(Icons.archive, color: Colors.white),
+                                              Padding(padding: EdgeInsets.fromLTRB(30, 2, 0, 0),
+                                                      child: Text("Archive",style: TextStyle(color: Colors.white),),
+                                              ),
+                                            ],
+                                          ),
+                                        ),),
+                          onDismissed: (direction) { 
+                            _archiveTask(item);
+                          
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(content: new Text("Task '$item' archived"), backgroundColor: Colors.green,)
+                            );
+                          });
+      },
+    );
   }
 
   void _archiveTask(final String taskName) {
@@ -110,6 +106,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Todo App'), 
+        actions: <Widget>[ 
+            new IconButton(icon: const Icon(Icons.list, color: Colors.white,))
+          ]),
       body: _buildListView(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
